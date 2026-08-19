@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>文件上传</title>
+</head>
+<body>
+<h2>文件上传</h2>
+<!-- 注意：必须添加 enctype="multipart/form-data" -->
+<form method="post" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <button type="submit">上传</button>
+</form>
+<!-- 显示提示信息 -->
+<p th:text="${message}"></p>
+</body>
+</html>
