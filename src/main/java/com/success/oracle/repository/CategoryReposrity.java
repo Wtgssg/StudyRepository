@@ -26,8 +26,8 @@ public interface CategoryReposrity extends JpaRepository<Category, Long> , JpaSp
             " ), " +
             "product_sale as(  " +
             "     select ot.product_id,p.category_id, " +
-            "            sum(quantity) as sum_quantity, " +
-            "            sum(unit_price) as sum_price " +
+            "            sum(ot.quantity) as sum_quantity, " +
+            "            sum(ot.unit_price) as sum_price " +
             "     from order_items ot join products p on ot.product_id = p.product_id  " +
             "     group by ot.product_id,p.category_id " +
             ")  " +
