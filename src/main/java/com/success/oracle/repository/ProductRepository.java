@@ -73,7 +73,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
     @Query(nativeQuery = true,value =" select t.product_id, t.product_name ,t.description,t.category_id,t.price,t.stock_quantity,t.status,t.create_time,t.update_time " +
             " from (" +
-            "     select p.* , row_number() over(order by price ) as rank_num " +
+            "     select p.product_id,p.product_name ,p.description,p.category_id,p.price,p.stock_quantity,p.status,p.create_time,p.update_time , row_number() over(order by price ) as rank_num " +
             "     from products p" +
             " ) t " +
             " where t.rank_num <= 10")
