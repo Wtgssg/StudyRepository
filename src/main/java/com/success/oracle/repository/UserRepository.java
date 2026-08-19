@@ -84,7 +84,7 @@ public interface UserRepository extends JpaRepository<User,Long>, QueryByExample
     String findUserById(@Param("userId") Long id);
 
 
-    @Query(nativeQuery = true,value = "select * from users where username like :likename || '%'")
+    @Query(nativeQuery = true,value = "select * from users where username like :likename% ")
     User findUserLikeusername(@Param("likename") String username);
 
     @Query(nativeQuery = true,value = "select * from users")
