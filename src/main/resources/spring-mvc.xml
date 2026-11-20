@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
            https://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/aop
-           https://www.springframework.org/schema/aop/spring-aop.xsd">
-
+           https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+    <task:annotation-driven/>
+    <bean id="taskExecutor"
+          class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="5"/> <!--核心线程数 -->
+        <property name="keepAliveSeconds" value="3000"/><!-- 某线程空闲超过这个时间，就回收该线程 -->
+        <property name="maxPoolSize" value="10"/><!--最大线程数 -->
+        <property name="queueCapacity" value="1000"/><!-- 队列大小 -->
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor$DiscardPolicy"/>
+        </property>
+    </bean>
 </beans>

@@ -1,6 +1,5 @@
 package com.success.oracle.config;
 
-import com.success.oracle.interceptor.LoginIntercept;
 import com.success.oracle.interceptor.LoginInterceptor;
 import com.success.oracle.interceptor.PermissionInterceptor;
 import org.springframework.context.annotation.Configuration;

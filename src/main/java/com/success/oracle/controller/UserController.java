@@ -14,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -66,5 +67,8 @@ public class UserController {
         userRepository.save(user);
     }
 
-
+    @GetMapping("/userse")
+    public List<User> finduserSe(@RequestParam("id") Long id){
+        return userService.findUserSe(id);
+    }
 }

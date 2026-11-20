@@ -1,6 +1,9 @@
 package com.success.oracle.controller;
 
+import com.success.oracle.entity.User;
+import com.success.oracle.repository.UserRepository;
 import com.success.oracle.service.SsoService;
+import com.success.oracle.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -19,7 +22,8 @@ import javax.servlet.http.HttpSession;
 public class HomeController {
 
     private final SsoService ssoService;
-
+    private final UserService userService;
+    private final UserRepository userRepository;
     /**
      * 首页（需要登录）
      * 访问：http://localhost:8080/home
@@ -43,31 +47,16 @@ public class HomeController {
     @GetMapping("/callback")
     public String callback(HttpServletRequest request,
                            HttpServletResponse response,
+                           @RequestParam(required = false) String ticket,
                            @RequestParam(required = false) String redirectUrl,
                            HttpSession session,
                            Model model) {
-
-        // 1. 从 Cookie 获取 Ticket
-        String ticket = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("TICKET".equals(cookie.getName())) {
-                    ticket = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        log.info("从 Cookie 获取 Ticket: {}", ticket);
-
-        // 2. 如果没有 Ticket，返回错误
+        log.info("从 url 获取 Ticket: {}", ticket);
         if (ticket == null) {
             model.addAttribute("error", "未找到 Ticket，请重新登录");
             return "error";
         }
 
-        // 3. 验证 Ticket
         String username = ssoService.verifyTicket(ticket);
         log.info("Ticket 验证结果: {}", username);
 
@@ -76,16 +65,8 @@ public class HomeController {
             return "error";
         }
 
-        // 4. 验证成功，存 Session
-        session.setAttribute("user", username);
-        model.addAttribute("username", username);
-
-        // 5. 清除 Cookie（一次性使用）
-        Cookie deleteCookie = new Cookie("TICKET", null);
-        deleteCookie.setPath("/");
-        deleteCookie.setMaxAge(0);
-        response.addCookie(deleteCookie);
-        log.info("已清除 TICKET Cookie");
+        User user = userRepository.findByUsername(username);
+        session.setAttribute("userId", user.getUserId());
 
         // 6. 跳转
         if (redirectUrl != null && !redirectUrl.isEmpty()) {

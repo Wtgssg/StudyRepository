@@ -20,9 +20,6 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long>, QueryByExampleExecutor<User> , JpaSpecificationExecutor<User> , CrudRepository<User,Long> {
 
-
-
-
     @Query(nativeQuery = true ,value = "" +
             " with rank_amount as( " +
             "     select row_number() over(order by o.total_amount) as rank_amounts, o.order_id " +

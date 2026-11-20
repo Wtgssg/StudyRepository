@@ -9,47 +9,48 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.net.URLEncoder;
 
 @Slf4j
 @Component
 public class LoginInterceptor  implements HandlerInterceptor {
+    private static final String SSO_LOGIN_URL = "http://localhost:8081/login";
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (!(handler instanceof HandlerMethod)) {
+            return true;
+        }
 
-//        // 1. 只拦截 Controller 方法
-//        if (!(handler instanceof HandlerMethod)) {
-//            return true;
-//        }
-//
-//        HandlerMethod handlerMethod = (HandlerMethod) handler;
-//       //2. 检查类有没有目标注解
-//        // 2. 检查方法上是否有 @RequireLogin 注解
-//        RequiresPermission annotation = handlerMethod.getMethodAnnotation(RequiresPermission.class);
-//        if (annotation == null) {
-//            // 方法上没有，检查类上有没有
-//            annotation = handlerMethod.getBeanType().getAnnotation(RequiresPermission.class);
-//        }
-//
-//        // 3. 没有 @RequireLogin 注解，直接放行
-//        if (annotation == null) {
-//            return true;
-//        }
-//
-//        // 4. 有 @RequiresPermission 注解，检查 Session
-//        HttpSession session = request.getSession(false);
-//        if (session == null || session.getAttribute("userId") == null) {
-//            log.warn("未登录访问拦截，URI: {}", request.getRequestURI());
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.getWriter().write("{\"code\":401,\"message\":\"请先登录\"}");
-//            return false;
-//        }
-//
-//        // 5. 认证通过，把用户信息存入 request，供 Controller 使用
-//        request.setAttribute("userId", session.getAttribute("userId"));
-//        request.setAttribute("username", session.getAttribute("username"));
-//
-        return true;
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        RequiresPermission annotation = handlerMethod.getMethodAnnotation(RequiresPermission.class);
+        if (annotation == null) {
+            annotation = handlerMethod.getBeanType().getAnnotation(RequiresPermission.class);
+        }
 
+        if (annotation == null) {
+            return true;
+        }
 
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("userId") != null) {
+            // 认证通过，把用户信息透传
+            request.setAttribute("userId", session.getAttribute("userId"));
+            request.setAttribute("username", session.getAttribute("username"));
+            return true;
+        }
+
+        String returnUrl = buildReturnUrl(request);
+        String redirectUrl = SSO_LOGIN_URL + "?returnUrl="
+                + URLEncoder.encode(returnUrl, "UTF-8");
+
+        log.warn("未登录访问拦截, URI: {}, 重定向到: {}", request.getRequestURI(), redirectUrl);
+        response.sendRedirect(redirectUrl);
+        return false;
+
+    }
+    private String buildReturnUrl(HttpServletRequest request) {
+        String url = request.getRequestURL().toString();
+        String query = request.getQueryString();
+        return (query == null) ? url : url + "?" + query;
     }
 }

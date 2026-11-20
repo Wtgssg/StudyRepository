@@ -1,26 +1,18 @@
 package com.success.oracle.service.impl;
-import com.success.oracle.Factory.SpecificationFactory;
-import com.success.oracle.dto.UserTotalSpendDTO;
 import com.success.oracle.entity.Order;
 import com.success.oracle.entity.User;
 import com.success.oracle.repository.UserRepository;
 import com.success.oracle.service.UserService;
-import com.success.oracle.util.CheckUtil;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -28,8 +20,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-
+    @Autowired
+    private EntityManager entityManager;
     public User login(String username, String password) {
         // 根据用户名查询用户（需要你在 UserRepository 中添加这个方法）
         User user = userRepository.findByUsername(username);
@@ -82,7 +74,15 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    public List<User> findUserSe(Long id){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();        //创建cb,使用cb创建查询
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+        cq.select(root.get("username"))
+                .where(cb.equal(root.get("userId"),id));
 
+        return entityManager.createQuery(cq).getResultList();
+    }
 
 //    public List<UserTotalSpendDTO> findUserTotalSpend(){
 //

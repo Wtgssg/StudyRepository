@@ -20,4 +20,6 @@ public interface UserService {
     List<User> findUserList();
 
     List<User> findUserOrders();
+
+    List<User> findUserSe(Long id);
 }

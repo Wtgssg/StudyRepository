@@ -4,15 +4,20 @@ import com.success.oracle.entity.User;
 import com.success.oracle.exception.CustomException;
 import com.success.oracle.util.CheckUtil;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.management.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -28,10 +33,38 @@ public class testdate {
     public static void main(String[] args) {
 
 
-        ExpressionParser parser = new SpelExpressionParser();
-        User user = new User();
-        String param = "";
-        String helloWorld = (String) parser.parseExpression("#user'["+param+"]'").getValue();
+        String[] nums = {"2.5", "3.5", "2.25", "2.35", "-2.5", "-3.5", "2.4", "2.6"};
+
+        DecimalFormat up = new DecimalFormat("0.0");
+        up.setRoundingMode(RoundingMode.HALF_UP);
+
+        DecimalFormat even = new DecimalFormat("0.0");
+        even.setRoundingMode(RoundingMode.HALF_EVEN);
+
+        System.out.printf("%-8s %-12s %-12s%n", "输入", "HALF_UP", "HALF_EVEN");
+        for (String n : nums) {
+            System.out.printf("%-8s %-12s %-12s%n",
+                    n, up.format(Double.parseDouble(n)), even.format(Double.parseDouble(n)));
+        }
+//
+//        Thread thread = new Thread(()->{
+//            System.out.println("触发空指针异常，观察反应");
+//            String s = null;
+//            s.length();
+//            System.out.println("触发空指针异常，结束阶段");
+//        });
+//
+//        thread.start();
+//        System.out.println("主线程不受影响");
+//
+//        ThreadPoolTest threadPoolTest = new ThreadPoolTest();
+//        threadPoolTest.test();
+//
+
+//        ExpressionParser parser = new SpelExpressionParser();
+//        User user = new User();
+//        String param = "";
+//        String helloWorld = (String) parser.parseExpression("#user'["+param+"]'").getValue();
 //        double avogadrosNumber = (Double) parser.parseExpression("6.0221415E+23").getValue();
 //        System.out.println(helloWorld);
 //        System.out.println(avogadrosNumber);

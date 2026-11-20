@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class SsoServiceImpl implements SsoService {
 
-    private static final String SSO_SERVER = "http://localhost:8080";
+    private static final String SSO_SERVER = "http://localhost:8081";
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
