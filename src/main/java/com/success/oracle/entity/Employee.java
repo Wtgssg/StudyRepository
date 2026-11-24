@@ -38,10 +38,6 @@ public class Employee {
     @Column(name = "COMMISSION_PCT", precision = 2, scale = 2)
     private BigDecimal commissionPct;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MANAGER_ID")
-    private Employee manager;
-
     @Column(name = "FIST_NAME")
     private String fistName;
 

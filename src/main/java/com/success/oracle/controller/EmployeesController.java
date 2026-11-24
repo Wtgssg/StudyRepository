@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class EmployeesController {
     public void exportEmployees(HttpServletResponse response) {
         try {
             this.employeesService.exportExcel(response);
-        } catch (CustomException | UnsupportedEncodingException e) {
+        } catch (CustomException | IOException e) {
             throw new RuntimeException(e);
         }
     }

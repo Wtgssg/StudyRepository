@@ -17,7 +17,7 @@ public class ColumnConfig<T> {
     private int width;
     @Getter
     private CellStyle cellStyle;
-
+    @Getter
     private final Function<T, Object> method;
 
     public ColumnConfig(String title, int width,CellStyle cellStyle, Function<T, Object> method) {
